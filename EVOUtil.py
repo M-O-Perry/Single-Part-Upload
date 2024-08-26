@@ -7,10 +7,10 @@ from TASFiles import TASFileReferences
 TAS = TASFileReferences().references
 
         
-def createNewPart(partNumber, description, partClass, partType, mfg = "", mfgNumber = "", vendor = "", vendorNumber = "", specs = "", closeINB = True):
+def createNewPart(partNumber, description, partClass, partType, mfg = "", mfgNumber = "", vendor = "", vendorNumber = "", specs = "", revision = "", closeINB = True):
     openEnterInventory(closeINB)
     
-    res = enterPartInfo(partNumber, description, partClass, partType)
+    res = enterPartInfo(partNumber, description, partClass, partType, revision=revision)
     
     if res == 1: # part already exists
         return
@@ -39,7 +39,7 @@ def openEnterInventory(closeINB = True):
         
     openTASProgram("INB")
         
-def enterPartInfo(partNumber, description, partClass, partType) -> int:
+def enterPartInfo(partNumber, description, partClass, partType, revision = "") -> int:
     send([partNumber, "enter 2", 3])
     
     pd.DataFrame(columns="696d207469726564".split(" ")).to_clipboard(index=False) 
@@ -66,7 +66,12 @@ def enterPartInfo(partNumber, description, partClass, partType) -> int:
     
     send([partType, "enter 23"])
     
-    send([partNumber, "enter 2", 1, "enter", "alt s", "enter", 0.5, "enter", 17, "alt x", 0.5])
+    send([partNumber, "enter 2", 1, "enter"])
+    
+    if revision != "":
+        send([revision, "enter"])
+        
+    send(["alt s", "enter", 0.5, "enter", 17, "alt x", 0.5])
     
     return 0
     
